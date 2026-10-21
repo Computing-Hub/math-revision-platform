@@ -3,84 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 Math Arcade - Worksheet</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Maths Arcade - Worksheet</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
-    <!-- MathLive -->
-    <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive-static.css">
-    <script defer src="https://unpkg.com/mathlive"></script>
+    <!-- MathLive: the answer boxes and on-screen maths keyboard -->
+    <link rel="stylesheet" href="https://unpkg.com/mathlive@0.111.0/mathlive-static.css">
+    <script defer src="https://unpkg.com/mathlive@0.111.0/mathlive.min.js"></script>
 
-    <!-- Arcade Theme (must load before worksheet.css) -->
-    <link rel="stylesheet" href="css/arcade-theme.css">
-    <link rel="stylesheet" href="css/worksheet.css">
+    <link rel="stylesheet" href="css/student.css">
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Animated background stars -->
-    <div class="stars" id="stars"></div>
+<body>
+    <div class="stars" id="stars" aria-hidden="true"></div>
 
-    <!-- Floating power-ups -->
-    <div class="powerup" style="top: 10%; left: 5%;">⭐</div>
-    <div class="powerup" style="top: 20%; right: 10%; animation-delay: 1s;">🏆</div>
-    <div class="powerup" style="top: 60%; left: 15%; animation-delay: 2s;">💎</div>
-    <div class="powerup" style="bottom: 15%; right: 20%; animation-delay: 1.5s;">🎯</div>
-
-    <!-- Coin counter -->
-    <div class="coin-counter">
-        <div class="coin">🪙</div>
-        <div style="margin-top: 8px;">LIVES: <span id="credits">3</span></div>
-    </div>
-
-    <header class="bg-blue-600 text-white shadow-md arcade-header">
-        <nav class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">🎮 MATH ARCADE 🎮</h1>
-                <div class="space-x-4">
-                    <a href="index.html" class="hover:text-blue-200">🏠 HOME</a>
-                    <a href="prompt-builder.html" class="hover:text-blue-200">🔧 BUILDER</a>
-                </div>
-            </div>
+    <header class="site-header">
+        <a class="brand" href="index.html">🎮 Maths Arcade</a>
+        <nav aria-label="Main">
+            <a href="index.html">🏠 All worksheets</a>
+            <a href="guide.html">📖 How to play</a>
         </nav>
     </header>
 
-    <main class="container mx-auto px-6 py-8 max-w-4xl">
-        <div id="worksheet-header" class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 id="worksheet-title" class="text-3xl font-bold text-gray-800 mb-2">Loading...</h2>
-            <div class="flex gap-4 text-sm text-gray-600">
-                <span id="worksheet-topic"></span>
-                <span id="worksheet-grade"></span>
-                <span id="worksheet-difficulty"></span>
-                <span id="worksheet-time"></span>
-            </div>
-        </div>
+    <main>
+        <section class="panel sheet-head">
+            <h1 id="worksheet-title">Loading…</h1>
+            <p class="sheet-meta" id="worksheet-meta"></p>
+        </section>
 
-        <!-- Progress Section -->
-        <div id="progress-section" class="progress-section" style="display: none;">
-            <div id="progress-text" class="progress-text">0/0 answered (0 correct)</div>
-            <div class="progress-bar-container">
-                <div id="progress-fill" class="progress-bar-fill" style="width: 0%;">
-                    <span id="progress-percentage" class="progress-percentage"></span>
-                </div>
+        <section class="panel scorebar" aria-label="Your progress">
+            <span class="score" id="score">⭐ 0</span>
+            <div class="progress">
+                <div class="progress-text" id="progress-text"></div>
+                <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
             </div>
-        </div>
+        </section>
+
+        <details class="panel how-to-answer" open>
+            <summary>How to type your answers</summary>
+            <p>Click the answer box and type. Press <kbd>Enter</kbd> or <strong>Check</strong>. You get 3 tries: ⭐⭐⭐ for the first, ⭐⭐ for the second, ⭐ for the third.</p>
+            <table>
+                <tr><td>Fraction</td><td>type <kbd>3</kbd><kbd>/</kbd><kbd>4</kbd>, it turns into ¾. Press <kbd>→</kbd> to leave the fraction.</td></tr>
+                <tr><td>Letters</td><td>just type them: <kbd>7</kbd><kbd>x</kbd> means 7 × x</td></tr>
+                <tr><td>Power</td><td><kbd>x</kbd><kbd>^</kbd><kbd>2</kbd> makes x², then <kbd>→</kbd></td></tr>
+                <tr><td>Square root</td><td>type <kbd>sqrt</kbd></td></tr>
+                <tr><td>Times / divide</td><td><kbd>*</kbd> and <kbd>/</kbd></td></tr>
+                <tr><td>No keyboard?</td><td>press <strong>⌨️ Maths keyboard</strong> to type with buttons on the screen</td></tr>
+            </table>
+        </details>
 
         <div id="questions-container"></div>
 
-        <div class="bg-white rounded-lg shadow-md p-6 mt-6">
-            <button id="submit-btn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-medium text-lg">
-                Submit Answers
-            </button>
-        </div>
+        <section class="panel">
+            <button type="button" id="finish-btn" class="btn-big">Finish and see my score</button>
+        </section>
 
-        <div id="results" class="hidden bg-white rounded-lg shadow-md p-6 mt-6">
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">Results</h3>
-            <div id="score" class="text-xl mb-4"></div>
-            <div id="results-details"></div>
-            <button id="retry-btn" class="mt-4 bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700">
-                Try Again
-            </button>
-        </div>
+        <section id="results" class="panel results hidden" aria-live="polite">
+            <h2>Your score</h2>
+            <p class="results-score" id="results-score"></p>
+            <p id="results-details"></p>
+            <p id="results-message"></p>
+            <div class="tools" style="margin-top:12px">
+                <button type="button" id="retry-btn" class="btn-check">Try again</button>
+                <a class="tool-link" href="index.html">Pick another worksheet</a>
+            </div>
+        </section>
     </main>
 
     <script src="js/katex-renderer.js"></script>
@@ -88,54 +75,22 @@
     <script src="js/mathlive-handler.js"></script>
     <script src="js/worksheet-loader.js"></script>
     <script>
-        // Create animated stars
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
             star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
+            star.style.width = star.style.height = Math.random() * 3 + 'px';
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
             star.style.animationDelay = Math.random() * 3 + 's';
             starsContainer.appendChild(star);
         }
 
-        // Load worksheet based on URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const worksheetId = urlParams.get('id');
-        if (worksheetId) {
-            loadWorksheet(worksheetId);
-        }
-
-        // Sound effect
-        function playSound() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-
-                oscillator.frequency.value = 800;
-                oscillator.type = 'square';
-
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } catch (e) {
-                console.log('Audio not available');
-            }
-        }
-
-        // Add sound to buttons
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('button').forEach(btn => {
-                btn.addEventListener('click', playSound);
-            });
+        // KaTeX and MathLive load with "defer", so start once the page is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            const id = new URLSearchParams(window.location.search).get('id');
+            if (id) loadWorksheet(id);
+            else window.location.href = 'index.html';
         });
     </script>
 </body>

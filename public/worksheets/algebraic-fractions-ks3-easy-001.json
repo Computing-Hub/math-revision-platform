@@ -14,11 +14,14 @@
       "prompt_latex": "\\text{Simplify fully: } \\frac{x}{5} + \\frac{x}{2}",
       "answer": {
         "exact_latex": "\\frac{7x}{10}",
-        "alt": ["7x/10"]
+        "alt": [
+          "7x/10"
+        ]
       },
       "marking": {
         "method": "fraction_equivalence",
-        "tolerance": 0.01
+        "tolerance": 0.01,
+        "form": "simplified_fraction"
       },
       "meta": {
         "subtopic": "Adding algebraic fractions",
@@ -29,11 +32,14 @@
       "prompt_latex": "\\text{Express as a single fraction: } \\frac{y + 4}{3} + \\frac{2y + 1}{6}",
       "answer": {
         "exact_latex": "\\frac{4y + 9}{6}",
-        "alt": ["(4y + 9)/6"]
+        "alt": [
+          "(4y + 9)/6"
+        ]
       },
       "marking": {
         "method": "fraction_equivalence",
-        "tolerance": 0.01
+        "tolerance": 0.01,
+        "form": "simplified_fraction"
       },
       "meta": {
         "subtopic": "Adding algebraic fractions with expressions",
@@ -44,11 +50,14 @@
       "prompt_latex": "\\text{Simplify: } \\frac{2}{5p} + \\frac{3}{4p}",
       "answer": {
         "exact_latex": "\\frac{23}{20p}",
-        "alt": ["23/(20p)"]
+        "alt": [
+          "23/(20p)"
+        ]
       },
       "marking": {
         "method": "fraction_equivalence",
-        "tolerance": 0.01
+        "tolerance": 0.01,
+        "form": "simplified_fraction"
       },
       "meta": {
         "subtopic": "Adding fractions with algebraic denominators",
@@ -59,11 +68,15 @@
       "prompt_latex": "\\text{Simplify: } \\frac{m}{3} \\times \\frac{m}{5}",
       "answer": {
         "exact_latex": "\\frac{m^2}{15}",
-        "alt": ["m^2/15", "m²/15"]
+        "alt": [
+          "m^2/15",
+          "m²/15"
+        ]
       },
       "marking": {
         "method": "fraction_equivalence",
-        "tolerance": 0.01
+        "tolerance": 0.01,
+        "form": "simplified_fraction"
       },
       "meta": {
         "subtopic": "Multiplying algebraic fractions",

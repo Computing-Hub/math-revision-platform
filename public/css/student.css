@@ -1,0 +1,241 @@
+/* Maths Arcade - student pages (home, worksheet, how to play).
+   Arcade look for headings; a plain, readable font for everything students read. */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --ink: #1f2937;
+    --muted: #4b5563;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --gold: #fbbf24;
+    --ok: #15803d;
+    --ok-bg: #dcfce7;
+    --bad: #b91c1c;
+    --bad-bg: #fee2e2;
+    --near: #a16207;
+    --near-bg: #fef9c3;
+    --radius: 14px;
+    --pixel: 'Press Start 2P', monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+}
+
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 3s infinite; }
+@keyframes twinkle { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .star { animation: none; } }
+
+/* ---------- header ---------- */
+.site-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 20px;
+    background: rgba(17, 24, 39, .55);
+    border-bottom: 3px solid var(--gold);
+}
+.site-header .brand {
+    font-family: var(--pixel);
+    font-size: 18px;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 0 10px rgba(251, 191, 36, .6);
+}
+.site-header nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.site-header nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+.site-header nav a:hover, .site-header nav a:focus-visible { background: rgba(255, 255, 255, .18); }
+
+main {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+}
+
+.panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+.panel h2, .pixel-title {
+    font-family: var(--pixel);
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4c1d95;
+    margin: 0 0 12px;
+}
+.hidden { display: none !important; }
+
+/* ---------- home ---------- */
+.hero { text-align: center; color: #fff; margin: 8px 0 22px; }
+.hero h1 { font-family: var(--pixel); font-size: 22px; line-height: 1.5; margin: 0 0 10px; text-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+.hero p { margin: 0; font-size: 18px; }
+
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li { background: #f5f3ff; border-radius: 10px; padding: 12px 12px 12px 46px; position: relative; }
+.steps li::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 12px; top: 12px; width: 24px; height: 24px; border-radius: 50%;
+    background: #7c3aed; color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 14px;
+}
+
+.worksheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.worksheet-card {
+    display: block;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px;
+    color: var(--ink);
+    text-decoration: none;
+    border: 3px solid transparent;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+    transition: transform .15s, border-color .15s;
+}
+.worksheet-card:hover, .worksheet-card:focus-visible { transform: translateY(-3px); border-color: var(--gold); outline: none; }
+.worksheet-card h3 { margin: 0 0 8px; font-size: 19px; }
+.card-tags { display: flex; gap: 6px; margin-bottom: 8px; }
+.badge { font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #e0e7ff; color: #3730a3; text-transform: capitalize; }
+.badge-easy { background: #dcfce7; color: #166534; }
+.badge-medium { background: #fef3c7; color: #92400e; }
+.badge-difficult, .badge-hard { background: #fee2e2; color: #991b1b; }
+.card-topic, .card-meta { margin: 0; color: var(--muted); font-size: 15px; }
+.card-best { margin: 8px 0 0; font-weight: 700; color: #92400e; }
+
+.tools { display: flex; gap: 10px; flex-wrap: wrap; }
+.tool-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 10px; background: #f5f3ff; color: #4c1d95; font-weight: 600; text-decoration: none;
+}
+.tool-link:hover { background: #ede9fe; }
+
+/* ---------- worksheet ---------- */
+.sheet-head h1 { font-family: var(--pixel); font-size: 17px; line-height: 1.6; color: #4c1d95; margin: 0 0 6px; }
+.sheet-meta { margin: 0; color: var(--muted); }
+
+.scorebar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.scorebar .score { font-weight: 800; font-size: 20px; color: #92400e; white-space: nowrap; }
+.scorebar .progress { flex: 1; min-width: 180px; }
+.progress-track { height: 12px; border-radius: 999px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
+.progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, #22c55e, #16a34a); transition: width .4s; }
+.progress-text { font-size: 15px; color: var(--muted); }
+
+.how-to-answer summary { cursor: pointer; font-weight: 700; color: #4c1d95; }
+.how-to-answer table { border-collapse: collapse; margin-top: 10px; width: 100%; }
+.how-to-answer td { padding: 6px 8px; border-top: 1px solid #ede9fe; vertical-align: top; }
+.how-to-answer kbd {
+    display: inline-block; min-width: 1.6em; text-align: center; padding: 1px 6px; border-radius: 6px;
+    border: 1px solid #c4b5fd; background: #f5f3ff; font-family: ui-monospace, Menlo, monospace; font-weight: 700;
+}
+
+.question-card { scroll-margin-top: 16px; border: 3px solid transparent; }
+.question-card[data-state="correct"] { border-color: #22c55e; }
+.question-card[data-state="revealed"] { border-color: #f87171; }
+.question-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.question-head h3 { margin: 0; font-family: var(--pixel); font-size: 13px; color: #4c1d95; }
+.status-badge { font-size: 14px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #f3f4f6; color: var(--muted); }
+.status-badge.correct { background: var(--ok-bg); color: var(--ok); }
+.status-badge.trying { background: var(--near-bg); color: var(--near); }
+.status-badge.revealed { background: var(--bad-bg); color: var(--bad); }
+.question-prompt { font-size: 22px; margin: 14px 0 6px; overflow-x: auto; }
+
+.answer-label { font-weight: 700; margin: 6px 0 6px; }
+.answer-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+math-field.answer-box {
+    min-width: 200px;
+    flex: 1 1 220px;
+    font-size: 26px;
+    padding: 8px 12px;
+    border: 3px solid #a78bfa;
+    border-radius: 12px;
+    background: #fff;
+}
+math-field.answer-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(37, 99, 235, .2); outline: none; }
+math-field.answer-box.correct { border-color: #22c55e; background: #f0fdf4; }
+math-field.answer-box.incorrect { border-color: #ef4444; background: #fef2f2; }
+math-field.answer-box.nearly { border-color: #eab308; background: #fefce8; }
+math-field.answer-box.muted { opacity: .45; }
+/* We give students one clearly labelled keyboard button instead of MathLive's small icons */
+math-field::part(menu-toggle), math-field::part(virtual-keyboard-toggle) { display: none; }
+
+.root-box { display: flex; align-items: center; gap: 8px; flex: 1 1 200px; }
+.root-label { font-weight: 800; font-size: 20px; white-space: nowrap; }
+.root-box math-field.answer-box { min-width: 120px; }
+.no-solutions { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 600; cursor: pointer; }
+.no-solutions input { width: 20px; height: 20px; }
+
+.keyboard-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 14px; border-radius: 10px; border: 2px solid #7c3aed; background: #f5f3ff; color: #4c1d95;
+    font: inherit; font-weight: 700; cursor: pointer;
+}
+.keyboard-btn:hover { background: #ede9fe; }
+
+.working { margin-top: 12px; }
+.working summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+math-field.working-box { width: 100%; min-height: 70px; margin-top: 8px; border-style: dashed; border-color: #cbd5e1; font-size: 22px; }
+
+.question-actions { display: flex; align-items: center; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
+.btn-check, .btn-big {
+    padding: 12px 26px; border: 0; border-radius: 12px; cursor: pointer;
+    font: inherit; font-weight: 800; color: #fff; background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 4px 0 #3730a3;
+}
+.btn-check:active, .btn-big:active { transform: translateY(2px); box-shadow: 0 2px 0 #3730a3; }
+.btn-check:disabled { opacity: .45; cursor: default; transform: none; }
+.btn-big { width: 100%; font-size: 18px; }
+.btn-secondary { background: #f3f4f6; color: var(--ink); box-shadow: 0 4px 0 #d1d5db; }
+.tries { color: var(--muted); font-size: 15px; }
+
+.feedback { margin-top: 12px; padding: 12px 14px; border-radius: 10px; display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; font-weight: 600; }
+.feedback.correct { background: var(--ok-bg); color: var(--ok); }
+.feedback.incorrect { background: var(--bad-bg); color: var(--bad); }
+.feedback.nearly { background: var(--near-bg); color: var(--near); }
+.feedback.info { background: #e0f2fe; color: #075985; }
+.model-answer { flex-basis: 100%; color: var(--ink); background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 20px; }
+
+.results h2 { margin-bottom: 6px; }
+.results-score { font-size: 28px; font-weight: 800; color: #92400e; margin: 0; }
+.results p { margin: 6px 0; }
+.load-error { color: #fff; font-size: 18px; }
+.load-error a { color: var(--gold); }
+
+/* ---------- guide ---------- */
+.guide h2 { margin-top: 0; }
+.guide table { border-collapse: collapse; width: 100%; }
+.guide th, .guide td { text-align: left; padding: 8px; border-top: 1px solid #ede9fe; vertical-align: top; }
+.guide kbd {
+    display: inline-block; min-width: 1.6em; text-align: center; padding: 1px 6px; border-radius: 6px;
+    border: 1px solid #c4b5fd; background: #f5f3ff; font-family: ui-monospace, Menlo, monospace; font-weight: 700;
+}
+
+@media (max-width: 560px) {
+    body { font-size: 16px; }
+    .hero h1 { font-size: 17px; }
+    .site-header .brand { font-size: 14px; }
+    .question-prompt { font-size: 19px; }
+    math-field.answer-box { font-size: 22px; }
+}

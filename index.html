@@ -3,618 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 Math Arcade - Revision Platform</title>
-    
-    <!-- Load Google Font FIRST before other styles -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <!-- Then load external stylesheets -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    
-    <!-- Arcade styles BEFORE Tailwind and custom CSS to establish base -->
-    <style id="arcade-base-styles">
-        /* Force arcade styling with high specificity */
-        html, body {
-            font-family: 'Press Start 2P', cursive, monospace !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            position: relative;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Prevent any styles from overriding body background */
-        body * {
-            font-family: inherit;
-        }
-        
-        /* Animated stars background */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-    </style>
-    
-    <!-- Load Tailwind AFTER base styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Override Tailwind defaults with arcade styles -->
-    <style id="arcade-override-styles">
-        /* Header arcade style - very specific selectors */
-        body > header,
-        header.bg-blue-600 {
-            background: rgba(0, 0, 0, 0.5) !important;
-            border-bottom: 4px solid #FFD700 !important;
-            position: relative;
-            z-index: 10;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
-        }
-        
-        body > header h1,
-        header.bg-blue-600 h1 {
-            font-family: 'Press Start 2P', cursive, monospace !important;
-            text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5) !important;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5), 0 0 10px #FFD700; }
-            to { text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5), 0 0 20px #FFD700, 0 0 30px #FFD700; }
-        }
-        
-        body > header a,
-        header.bg-blue-600 a {
-            transition: all 0.3s ease;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        body > header a:hover,
-        header.bg-blue-600 a:hover {
-            background: rgba(255, 215, 0, 0.3) !important;
-            transform: scale(1.1);
-        }
-        
-        /* Main content area */
-        main,
-        body > main {
-            position: relative;
-            z-index: 10;
-        }
-        
-        /* Quick links section - arcade style with highest specificity */
-        .quick-links-section,
-        section .quick-links-section,
-        main .quick-links-section {
-            background: rgba(0, 0, 0, 0.4) !important;
-            border: 4px solid #FFD700 !important;
-            border-radius: 20px !important;
-            padding: 24px !important;
-            margin-bottom: 32px !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-        }
-        
-        .quick-links-section h3 {
-            color: #FFD700 !important;
-            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5) !important;
-            margin-bottom: 20px !important;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        /* Quick link cards */
-        .quick-link-card,
-        a.quick-link-card {
-            background: linear-gradient(145deg, #4facfe, #00f2fe) !important;
-            border: 3px solid #fff !important;
-            border-radius: 15px !important;
-            padding: 16px !important;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
-            display: block;
-        }
-        
-        .quick-link-card:hover {
-            transform: translateY(-5px) scale(1.05) !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-        }
-        
-        .quick-link-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-        
-        .quick-link-card:nth-child(2) {
-            background: linear-gradient(145deg, #43e97b, #38f9d7) !important;
-        }
-        
-        .quick-link-card:nth-child(3) {
-            background: linear-gradient(145deg, #fa709a, #fee140) !important;
-        }
-        
-        .quick-link-card:nth-child(4) {
-            background: linear-gradient(145deg, #ff6b6b, #ee5a6f) !important;
-        }
-        
-        .quick-link-card .font-semibold {
-            color: #000 !important;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5) !important;
-            font-size: 0.8em !important;
-            margin-bottom: 8px;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        .quick-link-card .text-sm {
-            color: rgba(0, 0, 0, 0.8) !important;
-            font-size: 0.6em !important;
-            line-height: 1.4;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        /* Worksheet section title */
-        .worksheet-section-title {
-            background: rgba(0, 0, 0, 0.4) !important;
-            border: 4px solid #FFD700 !important;
-            border-radius: 15px !important;
-            padding: 20px !important;
-            text-align: center;
-            margin-bottom: 24px !important;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .worksheet-section-title h2 {
-            color: #FFD700 !important;
-            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5) !important;
-            animation: pulse 2s ease-in-out infinite;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .worksheet-section-title p {
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        /* Worksheet cards - arcade style */
-        .worksheet-card,
-        #worksheet-list .worksheet-card,
-        #worksheet-list > div,
-        #worksheet-list > a {
-            background: linear-gradient(145deg, #667eea, #764ba2) !important;
-            border: 3px solid #fff !important;
-            border-radius: 15px !important;
-            padding: 20px !important;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        .worksheet-card:hover,
-        #worksheet-list .worksheet-card:hover,
-        #worksheet-list > div:hover,
-        #worksheet-list > a:hover {
-            transform: translateY(-8px) rotate(1deg) !important;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5) !important;
-        }
-        
-        .worksheet-card::after {
-            content: '▶';
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5em;
-            color: #FFD700;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .worksheet-card:hover::after {
-            opacity: 1;
-            right: 10px;
-        }
-        
-        .worksheet-card h3,
-        #worksheet-list .worksheet-card h3,
-        #worksheet-list > div h3,
-        #worksheet-list > a h3 {
-            color: #FFD700 !important;
-            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5) !important;
-            font-size: 0.9em !important;
-            margin-bottom: 12px !important;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        .worksheet-card p,
-        #worksheet-list .worksheet-card p,
-        #worksheet-list > div p,
-        #worksheet-list > a p {
-            color: #fff !important;
-            font-size: 0.6em !important;
-            line-height: 1.6 !important;
-            margin-bottom: 8px !important;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        .worksheet-card .topic-tag {
-            display: inline-block;
-            background: rgba(255, 215, 0, 0.3) !important;
-            color: #FFD700 !important;
-            border: 2px solid #FFD700 !important;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.5em !important;
-            margin-right: 6px;
-            margin-top: 8px;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        .worksheet-card .difficulty {
-            color: #4facfe !important;
-            font-size: 0.6em !important;
-            margin-top: 8px;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        /* Loading state */
-        .loading-arcade {
-            text-align: center;
-            padding: 40px;
-            color: #FFD700 !important;
-            font-size: 0.8em !important;
-            animation: blink 1s infinite;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
-        }
-        
-        /* Power-ups floating animation */
-        .powerup {
-            position: fixed;
-            font-size: 2em;
-            animation: float 4s infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(180deg); }
-        }
-        
-        /* Coin counter */
-        .coin-counter {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7) !important;
-            border: 3px solid #FFD700 !important;
-            border-radius: 15px !important;
-            padding: 15px !important;
-            color: #FFD700 !important;
-            font-size: 0.8em !important;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5) !important;
-            font-family: 'Press Start 2P', cursive, monospace !important;
-        }
-        
-        .coin-counter .coin {
-            font-size: 1.5em;
-            animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            body {
-                font-size: 12px;
-            }
-            
-            header h1 {
-                font-size: 1em !important;
-            }
-            
-            header a {
-                font-size: 0.6em !important;
-                padding: 6px 12px !important;
-            }
-            
-            .quick-links-section h3 {
-                font-size: 0.8em !important;
-            }
-            
-            .worksheet-section-title h2 {
-                font-size: 1.2em !important;
-            }
-            
-            .coin-counter {
-                top: 70px;
-                right: 10px;
-                padding: 10px !important;
-                font-size: 0.6em !important;
-            }
-        }
-    </style>
-    
-    <!-- Load custom CSS last -->
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Maths Arcade</title>
+    <meta name="description" content="Maths practice worksheets: type your answers, get instant feedback and earn stars.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+    <link rel="stylesheet" href="css/student.css">
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Animated background stars -->
-    <div class="stars" id="stars"></div>
-    
-    <!-- Floating power-ups -->
-    <div class="powerup" style="top: 10%; left: 5%;">⭐</div>
-    <div class="powerup" style="top: 20%; right: 10%; animation-delay: 1s;">🏆</div>
-    <div class="powerup" style="top: 60%; left: 15%; animation-delay: 2s;">💎</div>
-    <div class="powerup" style="bottom: 15%; right: 20%; animation-delay: 1.5s;">🎯</div>
-    
-    <!-- Coin counter -->
-    <div class="coin-counter">
-        <div class="coin">🪙</div>
-        <div style="margin-top: 8px;">CREDITS: <span id="credits">99</span></div>
-    </div>
-    
-    <header class="bg-blue-600 text-white shadow-md">
-        <nav class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">🎮 MATH ARCADE 🎮</h1>
-                <div class="space-x-4">
-                    <a href="index.html" class="hover:text-blue-200">🏠 HOME</a>
-                    <a href="prompt-builder.html" class="hover:text-blue-200">🔧 BUILDER</a>
-                </div>
-            </div>
+<body>
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <a class="brand" href="index.html">🎮 Maths Arcade</a>
+        <nav aria-label="Main">
+            <a href="guide.html">📖 How to play</a>
+            <a href="prompt-builder.html">🔧 For teachers</a>
         </nav>
     </header>
 
-    <main class="container mx-auto px-6 py-8">
-        <section class="mb-8">
-            <!-- Quick Links Section -->
-            <div class="quick-links-section">
-                <h3 class="text-xl font-bold mb-3">🎓 QUICK START PORTALS</h3>
-                <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-                    <a href="quadratic-demo.html" class="quick-link-card" onclick="playSound()">
-                        <div class="font-semibold">📊 QUADRATIC PLOTTER</div>
-                        <div class="text-sm">Interactive graphing portal</div>
-                    </a>
-                    <a href="worksheet.html?id=quadratic-equations-demo" class="quick-link-card" onclick="playSound()">
-                        <div class="font-semibold">✏️ BASIC QUADRATIC</div>
-                        <div class="text-sm">5 questions with power-ups</div>
-                    </a>
-                    <a href="worksheet.html?id=quadratic-equations-compute-demo" class="quick-link-card" onclick="playSound()">
-                        <div class="font-semibold">🔮 AUTO-COMPUTE</div>
-                        <div class="text-sm">6 questions + boss level</div>
-                    </a>
-                    <a href="ANSWER_CHECKING_GUIDE.md" class="quick-link-card" onclick="playSound()">
-                        <div class="font-semibold">📖 GAME MANUAL</div>
-                        <div class="text-sm">How scoring works</div>
-                    </a>
-                </div>
-            </div>
+    <main>
+        <section class="hero">
+            <h1>Maths Arcade</h1>
+            <p>Pick a worksheet, type your answers and earn stars.</p>
+        </section>
 
-            <!-- Worksheets Section -->
-            <div class="worksheet-section-title">
-                <h2 class="text-3xl font-bold">⚡ SELECT YOUR QUEST ⚡</h2>
-                <p style="font-size: 0.6em; margin-top: 10px; color: #fff;">CHOOSE A CHALLENGE TO BEGIN YOUR ADVENTURE</p>
-            </div>
-            
-            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="worksheet-list">
-                <div class="loading-arcade">⏳ LOADING QUESTS...</div>
+        <section class="panel">
+            <h2>How to play</h2>
+            <ol class="steps">
+                <li><strong>Pick a worksheet</strong> below.</li>
+                <li><strong>Type your answer</strong> in the box. Fractions: type <code>3/4</code>. Powers: <code>x^2</code>.</li>
+                <li><strong>Press Check</strong> (or Enter). You get 3 tries.</li>
+                <li><strong>Earn stars:</strong> ⭐⭐⭐ first try, ⭐⭐ second, ⭐ third.</li>
+            </ol>
+            <p style="margin:12px 0 0">No keyboard? Use the <strong>⌨️ Maths keyboard</strong> button. More tips in <a href="guide.html">How to play</a>.</p>
+        </section>
+
+        <h2 class="pixel-title" style="color:#fff">Choose a worksheet</h2>
+        <div class="worksheet-grid" id="worksheet-list" aria-live="polite">
+            <p style="color:#fff">Loading worksheets…</p>
+        </div>
+
+        <section class="panel" style="margin-top:18px">
+            <h2>Explore</h2>
+            <div class="tools">
+                <a class="tool-link" href="quadratic-demo.html">📊 Quadratic graph plotter: see how a, b and c change the curve</a>
             </div>
         </section>
     </main>
 
     <script src="js/worksheet-loader.js"></script>
     <script>
-        // Debug: Check if font loaded
-        document.fonts.ready.then(function () {
-            const fontLoaded = document.fonts.check("12px 'Press Start 2P'");
-            console.log('Press Start 2P font loaded:', fontLoaded);
-            if (!fontLoaded) {
-                console.warn('Arcade font failed to load! Using fallback.');
-            }
-        });
-        
-        // Create animated stars
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
             star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
+            star.style.width = star.style.height = Math.random() * 3 + 'px';
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
             star.style.animationDelay = Math.random() * 3 + 's';
             starsContainer.appendChild(star);
         }
-        
-        // Credits animation
-        let credits = 99;
-        setInterval(() => {
-            credits = Math.floor(Math.random() * 50) + 50;
-            document.getElementById('credits').textContent = credits;
-        }, 5000);
-        
-        // Simple beep sound effect
-        function playSound() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 800;
-                oscillator.type = 'square';
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } catch (e) {
-                console.log('Audio not available');
-            }
-        }
-        
-        // Load and display all worksheets on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // If worksheet-loader.js defines loadWorksheetList, use it
-            if (typeof loadWorksheetList === 'function') {
-                loadWorksheetList();
-                
-                // Add arcade styling to dynamically loaded worksheets
-                const observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === 1) {
-                                // Remove Tailwind default classes
-                                node.classList.remove('bg-white', 'shadow', 'hover:shadow-md', 'bg-gray-50');
-                                
-                                // Add arcade class
-                                if (!node.classList.contains('worksheet-card') && 
-                                    !node.classList.contains('loading-arcade')) {
-                                    node.classList.add('worksheet-card');
-                                }
-                                
-                                // Add sound effect on click
-                                node.addEventListener('click', playSound);
-                            }
-                        });
-                    });
-                });
-                
-                const worksheetList = document.getElementById('worksheet-list');
-                if (worksheetList) {
-                    observer.observe(worksheetList, { childList: true, subtree: true });
-                }
-            } else {
-                console.warn('worksheet-loader.js not found, using fallback');
-                createSampleWorksheets();
-            }
-        });
-        
-        // Fallback function to create sample worksheets
-        function createSampleWorksheets() {
-            const worksheetList = document.getElementById('worksheet-list');
-            worksheetList.innerHTML = '';
-            
-            const sampleWorksheets = [
-                {
-                    title: 'ALGEBRA FUNDAMENTALS',
-                    description: 'Master the basics of algebraic expressions and equations',
-                    topic: 'Algebra',
-                    difficulty: '★★☆'
-                },
-                {
-                    title: 'QUADRATIC QUEST',
-                    description: 'Solve quadratic equations and graph parabolas',
-                    topic: 'Quadratics',
-                    difficulty: '★★★'
-                },
-                {
-                    title: 'FRACTION FUSION',
-                    description: 'Add, subtract, multiply and divide fractions',
-                    topic: 'Fractions',
-                    difficulty: '★★☆'
-                },
-                {
-                    title: 'GEOMETRY GAUNTLET',
-                    description: 'Calculate areas, perimeters, and angles',
-                    topic: 'Geometry',
-                    difficulty: '★★☆'
-                },
-                {
-                    title: 'RATIO RUMBLE',
-                    description: 'Solve problems involving ratios and proportions',
-                    topic: 'Ratios',
-                    difficulty: '★☆☆'
-                },
-                {
-                    title: 'PERCENTAGE POWER',
-                    description: 'Calculate percentages, increases, and decreases',
-                    topic: 'Percentages',
-                    difficulty: '★☆☆'
-                }
-            ];
-            
-            sampleWorksheets.forEach((worksheet, index) => {
-                const card = document.createElement('div');
-                card.className = 'worksheet-card';
-                card.onclick = function() {
-                    playSound();
-                    window.location.href = `worksheet.html?id=${index}`;
-                };
-                
-                card.innerHTML = `
-                    <h3>${worksheet.title}</h3>
-                    <p>${worksheet.description}</p>
-                    <span class="topic-tag">${worksheet.topic}</span>
-                    <div class="difficulty">Difficulty: ${worksheet.difficulty}</div>
-                `;
-                
-                worksheetList.appendChild(card);
-            });
-        }
-        
-        // Keyboard shortcuts
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'h' || e.key === 'H') window.location.href = 'index.html';
-            if (e.key === 'b' || e.key === 'B') window.location.href = 'prompt-builder.html';
-        });
-        
-        // Console Easter egg
-        console.log('%c🎮 MATH ARCADE 🎮', 'font-size: 20px; font-weight: bold; color: #FFD700;');
-        console.log('%cKeyboard shortcuts:', 'font-size: 14px; color: #4facfe;');
-        console.log('Press H for Home');
-        console.log('Press B for Builder');
-        console.log('%cReady Player One!', 'font-size: 16px; color: #43e97b;');
+        loadWorksheetList();
     </script>
 </body>
 </html>

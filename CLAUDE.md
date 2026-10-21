@@ -4,206 +4,78 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Interactive Math Revision Platform with arcade-style UI for UK curriculum students (KS3/KS4). Built as a pure static website using vanilla JavaScript, KaTeX for LaTeX rendering, and MathLive for interactive math input. No build process or server-side logic required.
+Maths Arcade: practice worksheets for UK KS3/KS4 students. A static site (vanilla JavaScript,
+KaTeX for showing maths, MathLive for typing it). No build step. Published on GitHub Pages at
+https://education.coderra.je/math-revision-platform/.
 
-**Two primary interfaces:**
-1. **Math Arcade** (index.html, arcade.html) - Worksheet selection with game-themed cards
-2. **Worksheet Player** (worksheet.html) - Interactive problem solver with real-time answer validation
+**Student pages** (use `css/student.css`):
+- `index.html`: how to play + the list of worksheets (and each worksheet's best score on this device)
+- `worksheet.html?id=<worksheet-id>`: plays one worksheet (`id` = JSON filename without `.json`)
+- `guide.html`: How to play: typing maths, tries and stars, how answers are checked
 
-**URL Structure:** Worksheets load via query parameter: `worksheet.html?id=worksheet-name` (matches JSON filename without extension)
+**Other pages** (older arcade theme, `css/arcade-theme.css`): `prompt-builder.html` (for teachers:
+writes an AI prompt that turns a worksheet into worksheet JSON), `quadratic-demo.html` (graph plotter),
+`arcade.html`, `debug-test.html`, `test-keyboard.html`.
 
-## Core Architecture
+## How a question works
 
-### Critical Data Flow (Cross-Component)
+1. The student types in a MathLive answer box (or uses the "Maths keyboard" button).
+   `/` makes a fraction, `^` a power, `sqrt` a root. Enter or **Check** marks it.
+2. `AnswerChecker.check()` marks it (see below).
+3. 3 tries per question. Points: 3 / 2 / 1 for the first / second / third try.
+   A "nearly" result (right value, wrong form) does not use a try.
+   After 3 wrong tries the model answer is shown (`AnswerChecker.modelAnswer`).
+4. "Finish" (or answering the last question) shows the score; the best score is saved in localStorage.
 
-1. **Worksheet Loading Chain:**
-   - URL parameter → `worksheet-loader.js:loadWorksheet()` → fetches `/worksheets/{id}.json`
-   - JSON questions → `renderQuestion()` → creates DOM structure with KaTeX-rendered prompts
-   - For each question: determines input type based on `marking.method`
+## Answer checking (`js/answer-checker.js`)
 
-2. **Input Field Creation (Method-Dependent Logic):**
-   - `marking.method: "solution_set"` with `answer.roots` array → **dual fields** (x₁ and x₂) via `mathlive-handler.js:createDualFieldQuestion()`
-   - All other methods → single MathLive field via `createMathField()`
-   - **Work area** (optional scratchpad) is created for all questions, shares same keyboard as answer field
+`LatexMath` parses the LaTeX MathLive produces (including brace-less `\frac23`, `\sqrt5`,
+`\left( \right)`, implicit multiplication like `7x` and `2(x+1)`) into a tree and evaluates it.
 
-3. **Answer Validation Flow:**
-   - Student clicks "Check" button → `checkAnswer(questionIndex)`
-   - Retrieves LaTeX value(s) from MathLive field(s) via `mathLiveHandler.getValue()`
-   - Passes to `AnswerChecker.check()` with `marking.method` and `tolerance`
-   - Result → visual feedback via `.correct`/`.incorrect` CSS classes on MathLive fields
+| `marking.method` | Checks |
+|---|---|
+| `fraction_equivalence`, `numeric_equal`, `equivalent` | Same value as `answer.exact_latex` (or any `answer.alt`). Letters are tested by substituting several numbers, so `7/10` or `7y/10` never pass for `7x/10`. |
+| `solution_set` | Two boxes (x₁, x₂) in any order; each must be a number. `answer.roots: []` means "no real solutions" (the student ticks a box). A repeated root can be typed once. Optional `answer.roots_latex` for the model answer (e.g. `\frac{2}{3}`). |
+| `solution_pair` | `x=a, y=b` |
+| `exact` | Text match (avoid: prefer the value-based methods) |
 
-### Key Components
+Optional `marking.form`:
+- `simplified_fraction`: must be one fraction with nothing that cancels ("Simplify fully", "single fraction")
+- `single_fraction`: must be one fraction
+- `simplified`: a fraction answer must not cancel (e.g. 3/3 for 1)
 
-**Worksheet System** (`js/worksheet-loader.js`)
-- **Global state:** `currentWorksheet`, `studentAnswers`, `questionStatus` objects
-- **Rendering:** Dynamically generates question cards with KaTeX-rendered LaTeX
-- **Progress tracking:** Updates status badges and progress bar based on `questionStatus`
-- **Two validation modes:** Individual question checking vs. full worksheet submission
+Test the checker without a browser: it exports `{ AnswerChecker, LatexMath }` under Node.
 
-**MathLive Handler** (`js/mathlive-handler.js`)
-- **Registry pattern:** Maintains `Map` of field IDs → MathLive instances
-- **6 custom virtual keyboards:** Registered globally via `window.mathVirtualKeyboard.layouts`
-  - KS3/KS4, Algebra, Quadratic (with formula templates), Calculus, Inequalities, Basic
-- **Dual-field support:** Special handling for quadratic equations (x₁/x₂) with synchronized keyboards
-- **Visual feedback:** Applies CSS classes directly to MathLive elements
-
-**Answer Checker** (`js/answer-checker.js`)
-- **5 marking methods:**
-  - `fraction_equivalence`: Parses LaTeX fractions and compares decimal values
-  - `numeric_equal`: Numeric comparison with configurable tolerance
-  - `solution_pair`: Validates (x,y) coordinate pairs
-  - `solution_set`: Validates unordered sets of roots (for quadratics)
-  - `exact`: LaTeX string normalization and comparison
-- **Alternative answers:** Checks `answer.alt` array if primary answer fails
-- **Tolerance handling:** Different precision for fractions (0.02) vs. decimals (0.01)
-
-### Worksheet JSON Schema
+## Worksheet JSON (`worksheets/<id>.json`)
 
 ```json
 {
-  "id": "unique-id",  // Must match filename (without .json)
-  "title": "Worksheet Title",
-  "topic": "Topic Name",
-  "grade": "KS3|KS4 Foundation|KS4 Higher",
-  "difficulty": "easy|medium|difficult",
-  "estimatedTime": 15,
+  "id": "same-as-filename",
+  "title": "…", "topic": "…", "grade": "KS3", "difficulty": "easy|medium|difficult", "estimatedTime": 15,
   "questions": [
     {
-      "prompt_latex": "\\text{Question with } \\frac{LaTeX}{notation}",
-      "answer": {
-        "exact_latex": "1",      // For exact/numeric/fraction methods
-        "roots": [2, 3],         // For solution_set (triggers dual fields)
-        "pair": [2, 3],          // For solution_pair method
-        "alt": ["1.0", "1/1"]    // Alternative formats (optional)
-      },
-      "marking": {
-        "method": "numeric_equal|fraction_equivalence|solution_set|solution_pair|exact",
-        "tolerance": 0.01
-      },
-      "meta": {
-        "coefficients": { "a": 1, "b": -5, "c": 6 },  // Enables auto-compute
-        "subtopic": "string",
-        "difficulty": "easy|medium|difficult"
-      }
+      "prompt_latex": "\\text{Simplify fully: } \\frac{x}{5} + \\frac{x}{2}",
+      "answer": { "exact_latex": "\\frac{7x}{10}" },
+      "marking": { "method": "fraction_equivalence", "form": "simplified_fraction" }
     }
   ]
 }
 ```
 
-**Critical:** `marking.method: "solution_set"` with `answer.roots: [x1, x2]` automatically triggers dual-field rendering (x₁ and x₂ inputs).
+**To add a worksheet:** add the JSON file, then add its id to `WORKSHEETS` at the top of
+`js/worksheet-loader.js` (GitHub Pages can't list a folder, so the list is written out).
 
-## File Structure
+## Files
 
-```
-/
-├── index.html, arcade.html        # Arcade interfaces (worksheet selection)
-├── worksheet.html                 # Main worksheet player
-├── quadratic-demo.html            # Standalone graphing calculator
-├── prompt-builder.html            # Question prompt builder tool
-├── css/
-│   ├── styles.css                # Global styling
-│   ├── worksheet.css             # Worksheet + MathLive field styles
-│   └── arcade-theme.css          # Arcade-specific theme
-├── js/
-│   ├── worksheet-loader.js       # Core: worksheet loading, rendering, state
-│   ├── mathlive-handler.js       # Core: MathLive fields, keyboards, feedback
-│   ├── answer-checker.js         # Core: answer validation methods
-│   ├── katex-renderer.js         # LaTeX rendering utilities
-│   └── quadratic-plotter.js      # Graphing functionality
-├── worksheets/                   # Source worksheet JSON files
-└── public/                       # **Deployment mirror** (copy of root files)
-```
+- `js/worksheet-loader.js`: worksheet list, question cards, tries/points, score, results
+- `js/mathlive-handler.js`: answer boxes, on-screen keyboards (built per question: the question's own
+  letters, fractions, powers; quadratics get the formula key), keyboard spacing
+- `js/answer-checker.js`: marking (above)
+- `js/katex-renderer.js`: `renderLatex(latex, element, displayMode)`
+- `public/`: mirror of the student files for the DigitalOcean config (`.do/`); keep it in sync
 
-**Deployment:** The `/public/` directory mirrors root structure. Deploy either root or public/ to web server. All dependencies load via CDN (Tailwind, KaTeX, MathLive).
+## Dependencies (CDN, pinned)
 
-## Development Tasks
-
-### Testing Worksheets
-Open `worksheet.html?id={worksheet-id}` in browser (id = JSON filename without extension)
-
-Example: `/worksheets/quadratic-equations-demo.json` → `worksheet.html?id=quadratic-equations-demo`
-
-**Quick test with all features:** `worksheet.html?id=quadratic-equations-compute-demo`
-
-### Adding New Worksheets
-
-1. Create JSON in `/worksheets/` following schema above
-2. Choose `marking.method` based on answer type:
-   - `solution_set`: Quadratic roots (triggers dual x₁/x₂ fields)
-   - `fraction_equivalence`: Fractions (handles multiple formats)
-   - `numeric_equal`: Numbers with tolerance
-   - `exact`: Algebraic expressions (LaTeX matching)
-3. For quadratics: add `meta.coefficients: {a, b, c}` to enable auto-compute button
-4. Open in browser to test
-
-### Adding New Marking Methods
-
-Extend `answer-checker.js`:
-1. Add case to `AnswerChecker.check()` switch statement
-2. Implement `static check{MethodName}(studentAnswer, correctAnswer, tolerance)`
-3. Use `this.parseNumeric()` or `this.parseFraction()` helpers for LaTeX parsing
-4. Return `{correct: boolean, message: string}`
-
-### Customizing Virtual Keyboards
-
-Edit keyboard methods in `mathlive-handler.js`:
-- `createKS3KS4Keyboard()`, `createAlgebraKeyboard()`, etc.
-- Each returns `{label, tooltip, rows: []}`
-- Rows contain button definitions: `{class, latex, label}` or `'[7]'` for numbers
-- See MathLive keyboard API: https://cortexjs.io/mathlive/guides/virtual-keyboards/
-
-To change which keyboard appears for a question type:
-- Modify keyboard assignment logic in `createMathField()` method
-
-## Styling Architecture
-
-**Arcade Theme:**
-- "Press Start 2P" font (Google Fonts) for retro gaming aesthetic
-- Purple gradient: `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`
-- Gold accents: `#FFD700` (borders, badges, highlights)
-- Inline styles in `index.html` with high specificity to override Tailwind defaults
-
-**MathLive Visual Feedback:**
-- `.correct` class → green border (`#10b981`)
-- `.incorrect` class → red border (`#ef4444`)
-- Applied directly to `<math-field>` elements by `mathlive-handler.js:applyFeedback()`
-- CSS defined in `css/worksheet.css`
-
-## Debugging
-
-**Console Logs:**
-- MathLive handler logs field creation, value retrieval, and feedback application
-- Worksheet loader logs JSON fetch, question rendering, answer validation
-
-**Browser DevTools:**
-- Inspect `<math-field>` elements to see current LaTeX value and CSS classes
-- Check `window.mathVirtualKeyboard.layouts` to verify registered keyboards
-- Examine global state: `currentWorksheet`, `studentAnswers`, `questionStatus`
-
-## Key Technical Details
-
-**LaTeX Parsing Challenges:**
-- MathLive outputs LaTeX (e.g., `\frac{3}{4}`)
-- Answer checker must parse both LaTeX and text formats (e.g., `3/4`)
-- Normalization strips whitespace and standardizes notation before comparison
-
-**Dual Field Synchronization:**
-- Quadratic questions create two separate MathLive instances (x₁ and x₂)
-- Both fields controlled by same keyboard toggle buttons
-- Validation checks both fields simultaneously, applies feedback to both
-- Implementation in `createDualFieldQuestion()` and `handleDualFieldAnswer()`
-
-**Auto-Compute Feature:**
-- Requires `meta.coefficients: {a, b, c}` in question JSON
-- Calculates discriminant (b² - 4ac) and quadratic formula roots
-- Inserts calculated values into x₁ and x₂ fields
-- Does not automatically check answer (student must click "Check")
-
-## CDN Dependencies
-
-Static site loads all dependencies externally:
-- **Tailwind CSS:** Latest via CDN
-- **KaTeX:** v0.16.9 (CSS + JS)
-- **MathLive:** Latest from unpkg.com
-
-No build process, npm, or package.json required. Works with any static web server or file:// protocol.
+- KaTeX 0.16.9
+- MathLive 0.111.0 (`https://unpkg.com/mathlive@0.111.0/mathlive.min.js`: files are at the package
+  root, not `dist/`). Use properties (`mf.mathVirtualKeyboardPolicy = 'manual'`), not `setOptions()`.
